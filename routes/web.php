@@ -17,7 +17,7 @@ use App\Http\Controllers\Auth\LoginController;
 
 Route::redirect('/', '/login');
 
-Route::view('/register', 'auth.register')->name('user.register');
+Route::get('/register', [RegisterController::class, 'create'])->name('user.register');
 Route::post('/register', [RegisterController::class, 'register']);
 
-Route::view('/login', 'auth.login')->name('user.login');
+Route::get('/login', [LoginController::class, 'create'])->name('user.login');

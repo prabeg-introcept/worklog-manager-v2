@@ -1,10 +1,12 @@
 <?php
 
+use App\Constants\DbTables;
+use App\Constants\DepartmentsTable;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddColumnDepartmentIdToUsersTable extends Migration
+class CreateUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +15,20 @@ class AddColumnDepartmentIdToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::create(DbTables::USERS, function (Blueprint $table) {
+            $table->id();
+            $table->string('username');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
+            $table->boolean('is_admin')->default(0);
             $table->foreignId('department_id')
                 ->nullable()
                 ->constrained('departments')
                 ->onUpdate('cascade')
                 ->onDelete('set null');
+            $table->timestamps();
         });
     }
 
@@ -29,8 +39,6 @@ class AddColumnDepartmentIdToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists(DbTables::USERS);
     }
 }

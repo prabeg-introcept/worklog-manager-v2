@@ -44,13 +44,15 @@
         <div class="mb-3">
             <label for="department" class="form-label">Department*: </label>
             <select class="form-select" name="department_id">
-                <option selected value="1">Digital Marketing</option>
-                <option value="2">Project Management</option>
-                <option value="3">Design</option>
-                <option value="4">Development</option>
-                <option value="5">QA</option>
-                <option value="6">Customer Support</option>
+                @foreach($departments as $department)
+                    <option selected value=" {{$department->id}}">{{$department->name}}</option>
+                @endforeach
             </select>
+            @error('department_id')
+            <div class="error-feedback">
+                {{ $message }}
+            </div>
+            @enderror
         </div>
         <div class="mb-3">
             <label for="password" class="form-label">Password*: </label>
@@ -66,17 +68,12 @@
             @enderror
         </div>
         <div class="mb-3">
-            <label for="confirmPassword" class="form-label">Confirm Password*: </label>
+            <label for="password_confirmation" class="form-label">Confirm Password*: </label>
             <input
                 type="password"
                 class="form-control"
-                name="confirmPassword"
-                value="{{ old('confirmPassword') }}">
-            @error('confirmPassword')
-            <div class="error-feedback">
-                {{ $message }}
-            </div>
-            @enderror
+                name="password_confirmation"
+                value="{{ old('password_confirmation') }}">
         </div>
         <button type="submit" class="btn btn-primary">Register</button>
     </form>
