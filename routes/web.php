@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Users\WorklogController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
@@ -18,6 +19,12 @@ use App\Http\Controllers\Auth\LoginController;
 Route::redirect('/', '/login');
 
 Route::get('/register', [RegisterController::class, 'create'])->name('user.register');
-Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/register', [RegisterController::class, 'store']);
 
 Route::get('/login', [LoginController::class, 'create'])->name('user.login');
+Route::post('/login', [LoginController::class, 'store']);
+
+Route::middleware('auth')->group(function(){
+    Route::get('/logout', [LoginController::class, 'logout'])->name('user.logout');
+    Route::resource('/worklogs', WorklogController::class);
+});

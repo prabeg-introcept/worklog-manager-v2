@@ -27,7 +27,7 @@ class RegisterController extends Controller
      * @param RegisterUserRequest $request
      * @return Factory|View|RedirectResponse
      */
-    public function register(RegisterUserRequest $request)
+    public function store(RegisterUserRequest $request)
     {
         $userData = $request->safe()->except('confirmPassword');
 
