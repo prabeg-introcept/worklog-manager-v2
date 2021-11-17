@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreWorklogRequest;
+use App\Http\Requests\UpdateWorklogRequest;
+use App\Models\Worklog;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class WorklogController extends Controller
 {
@@ -17,72 +21,74 @@ class WorklogController extends Controller
      */
     public function index()
     {
-        return view('user.dashboard');
+        $worklogs = Worklog::where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('user.dashboard', ['worklogs' => $worklogs]);
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return Response
+     * @return Factory|View
      */
     public function create()
     {
-        //
+        return view('worklog.create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
-     * @return Response
+     * @param StoreWorklogRequest $request
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreWorklogRequest $request)
     {
-        //
-    }
+        Worklog::create($request->validated());
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        //
+        return redirect()
+            ->route('worklogs.index')
+            ->with('success', 'Worklog created successfully.');
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return Response
+     * @param Worklog $worklog
+     * @return Factory|View|Response
      */
-    public function edit($id)
+    public function edit(Worklog $worklog)
     {
-        //
+        return view('worklog.edit',
+            ['worklog' => $worklog]
+        );
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param  int  $id
-     * @return Response
+     * @param UpdateWorklogRequest $request
+     * @param Worklog $worklog
+     * @return RedirectResponse|void
      */
-    public function update(Request $request, $id)
+    public function update(UpdateWorklogRequest $request, Worklog $worklog)
     {
-        //
-    }
+        $dateCreated = strtotime(date('Y-m-d', strtotime($worklog->created_at)));
+        $dateToday = strtotime(date('Y-m-d'));
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
+        if($dateCreated !== $dateToday){
+            return back()->with('error', 'Worklogs can be updated only on the day they are created');
+        }
+
+        $updatedWorklog = $request->validated();
+
+        $worklog->title = $updatedWorklog['title'];
+        $worklog->description = $updatedWorklog['description'];
+
+        $worklog->save();
+
+        return back()->with('success', 'Worklog updated successfully');
     }
 }

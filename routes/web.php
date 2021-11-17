@@ -26,5 +26,5 @@ Route::post('/login', [LoginController::class, 'store']);
 
 Route::middleware('auth')->group(function(){
     Route::get('/logout', [LoginController::class, 'logout'])->name('user.logout');
-    Route::resource('/worklogs', WorklogController::class);
+    Route::resource('/worklogs', WorklogController::class)->except(['show', 'destroy']);
 });
