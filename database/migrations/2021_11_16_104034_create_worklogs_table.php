@@ -20,8 +20,7 @@ class CreateWorklogsTable extends Migration
             $table->tinyText('description')->nullable();
             $table->foreignId('user_id')
                 ->constrained(DbTables::USERS)
-                ->cascadeOnUpdate()
-                ->cascadeOnUpdate();
+                ->cascadeOnDelete();
             $table->timestamps();
         });
     }
