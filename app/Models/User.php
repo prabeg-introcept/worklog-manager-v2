@@ -61,6 +61,7 @@ class User extends Authenticatable
      */
     public function worklogs(): HasMany
     {
-        return $this->hasMany(Worklog::class, 'user_id', 'id');
+        return $this->hasMany(Worklog::class, 'user_id', 'id')
+            ->orderByDesc('created_at');
     }
 }
