@@ -3,9 +3,6 @@
 namespace App\Http\Controllers\Users;
 
 use App\Constants\FlashMessages;
-use App\Exceptions\Worklogs\WorklogNotCreatedException;
-use App\Exceptions\Worklogs\WorklogNotFoundException;
-use App\Exceptions\Worklogs\WorklogNotUpdatedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreWorklogRequest;
 use App\Http\Requests\UpdateWorklogRequest;
@@ -15,6 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Throwable;
 
 class WorklogController extends Controller
 {
@@ -32,13 +30,13 @@ class WorklogController extends Controller
      * Display a listing of the resource.
      *
      * @return Factory|View|RedirectResponse
-     * @throws \Exception
+     * @throws Throwable
      */
     public function index()
     {
         try{
             $worklogs = $this->worklogService->getLoggedInUserWorklogs();
-        }catch(WorklogNotFoundException $exception){
+        }catch(Throwable $exception){
             return back()->with('error', $exception->getMessage());
         }
         return view('user.dashboard', ['worklogs' => $worklogs]);
@@ -59,12 +57,13 @@ class WorklogController extends Controller
      *
      * @param StoreWorklogRequest $request
      * @return RedirectResponse
+     * @throws Throwable
      */
     public function store(StoreWorklogRequest $request)
     {
         try{
-            $this->worklogService->createWorklog($request->validated());
-        }catch(WorklogNotCreatedException $exception){
+            $this->worklogService->create($request->validated());
+        }catch(Throwable $exception){
             return back()
                 ->with('error', $exception->getMessage());
         }
@@ -82,10 +81,11 @@ class WorklogController extends Controller
     public function edit($id)
     {
         try{
-            $worklog = $this->worklogService->getWorklog($id);
+            $worklog = $this->worklogService->find($id);
         }catch (ModelNotFoundException $exception){
-            return back()
-                ->with('error', "Worklog with $id does not exists.");
+            return redirect()
+                ->route('worklogs.index')
+                ->with('error', "Worklog with id: $id does not exist.");
         }
         return view('worklog.edit',
             ['worklog' => $worklog]
@@ -98,13 +98,14 @@ class WorklogController extends Controller
      * @param UpdateWorklogRequest $request
      * @param $id
      * @return RedirectResponse|void
+     * @throws Throwable
      */
     public function update(UpdateWorklogRequest $request, $id)
     {
         try{
-            $this->worklogService->updateWorklog($request->validated(), $id);
+            $this->worklogService->update($request->validated(), $id);
         }
-        catch(WorklogNotUpdatedException $exception){
+        catch(Throwable $exception){
             return back()->with('error', $exception->getMessage());
         }
         return back()->with('success', FlashMessages::SUCCESS_UPDATE_WORKLOG);
