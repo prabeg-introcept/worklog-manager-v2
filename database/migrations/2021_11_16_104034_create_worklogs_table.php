@@ -14,14 +14,14 @@ class CreateWorklogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('worklogs', function (Blueprint $table) {
+        Schema::create(DbTables::WORKLOGS, function (Blueprint $table) {
             $table->id();
             $table->string('title', 80);
-            $table->text('description')->nullable();
+            $table->tinyText('description')->nullable();
             $table->foreignId('user_id')
                 ->constrained(DbTables::USERS)
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
+                ->cascadeOnUpdate()
+                ->cascadeOnUpdate();
             $table->timestamps();
         });
     }
@@ -33,6 +33,6 @@ class CreateWorklogsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('worklogs');
+        Schema::dropIfExists(DbTables::WORKLOGS);
     }
 }

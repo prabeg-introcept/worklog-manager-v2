@@ -17,7 +17,7 @@
             class="form-control"
             readonly
             name="date"
-            value="{{ date('Y-m-d, h:i A', strtotime($worklog->updated_at)) }}"
+            value="{{ $worklog->updated_at->format('Y-m-d, h:i A') }}"
         />
     </div>
     <div class="mb-3">
@@ -50,7 +50,7 @@
             type="hidden"
             class="form-control"
             name="user_id"
-            value="{{\Illuminate\Support\Facades\Auth::id()}}"
+            value="{{ auth()->id() }}"
         />
     </div>
     <button type="submit" class="btn btn-primary">Save</button>

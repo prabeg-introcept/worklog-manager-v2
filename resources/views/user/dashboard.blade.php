@@ -17,7 +17,7 @@
     @foreach($worklogs as $worklog)
     <tr>
         <td>
-            <?= date('Y-m-d, h:i A', strtotime($worklog->created_at))?>
+            {{ date('Y-m-d, h:i A', strtotime($worklog->created_at)) }}
         </td>
         <td>
             <a href="{{ route('worklogs.edit', [$worklog->id]) }}">

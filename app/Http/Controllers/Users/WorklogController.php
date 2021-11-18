@@ -2,29 +2,45 @@
 
 namespace App\Http\Controllers\Users;
 
+use App\Constants\FlashMessages;
+use App\Exceptions\Worklogs\WorklogNotCreatedException;
+use App\Exceptions\Worklogs\WorklogNotFoundException;
+use App\Exceptions\Worklogs\WorklogNotUpdatedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreWorklogRequest;
 use App\Http\Requests\UpdateWorklogRequest;
-use App\Models\Worklog;
+use App\Services\WorklogService;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 
 class WorklogController extends Controller
 {
     /**
+     * @var WorklogService
+     */
+    private WorklogService $worklogService;
+
+    public function __construct(WorklogService $worklogService)
+    {
+        $this->worklogService = $worklogService;
+    }
+
+    /**
      * Display a listing of the resource.
      *
-     * @return Factory|View
+     * @return Factory|View|RedirectResponse
+     * @throws \Exception
      */
     public function index()
     {
-        $worklogs = Worklog::where('user_id', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->get();
-
+        try{
+            $worklogs = $this->worklogService->getLoggedInUserWorklogs();
+        }catch(WorklogNotFoundException $exception){
+            return back()->with('error', $exception->getMessage());
+        }
         return view('user.dashboard', ['worklogs' => $worklogs]);
     }
 
@@ -46,21 +62,31 @@ class WorklogController extends Controller
      */
     public function store(StoreWorklogRequest $request)
     {
-        Worklog::create($request->validated());
-
+        try{
+            $this->worklogService->createWorklog($request->validated());
+        }catch(WorklogNotCreatedException $exception){
+            return back()
+                ->with('error', $exception->getMessage());
+        }
         return redirect()
             ->route('worklogs.index')
-            ->with('success', 'Worklog created successfully.');
+            ->with('success', FlashMessages::SUCCESS_CREATE_WORKLOG);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param Worklog $worklog
-     * @return Factory|View|Response
+     * @param $id
+     * @return Factory|View|RedirectResponse|Response
      */
-    public function edit(Worklog $worklog)
+    public function edit($id)
     {
+        try{
+            $worklog = $this->worklogService->getWorklog($id);
+        }catch (ModelNotFoundException $exception){
+            return back()
+                ->with('error', "Worklog with $id does not exists.");
+        }
         return view('worklog.edit',
             ['worklog' => $worklog]
         );
@@ -70,25 +96,17 @@ class WorklogController extends Controller
      * Update the specified resource in storage.
      *
      * @param UpdateWorklogRequest $request
-     * @param Worklog $worklog
+     * @param $id
      * @return RedirectResponse|void
      */
-    public function update(UpdateWorklogRequest $request, Worklog $worklog)
+    public function update(UpdateWorklogRequest $request, $id)
     {
-        $dateCreated = strtotime(date('Y-m-d', strtotime($worklog->created_at)));
-        $dateToday = strtotime(date('Y-m-d'));
-
-        if($dateCreated !== $dateToday){
-            return back()->with('error', 'Worklogs can be updated only on the day they are created');
+        try{
+            $this->worklogService->updateWorklog($request->validated(), $id);
         }
-
-        $updatedWorklog = $request->validated();
-
-        $worklog->title = $updatedWorklog['title'];
-        $worklog->description = $updatedWorklog['description'];
-
-        $worklog->save();
-
-        return back()->with('success', 'Worklog updated successfully');
+        catch(WorklogNotUpdatedException $exception){
+            return back()->with('error', $exception->getMessage());
+        }
+        return back()->with('success', FlashMessages::SUCCESS_UPDATE_WORKLOG);
     }
 }
