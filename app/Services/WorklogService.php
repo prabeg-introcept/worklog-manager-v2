@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Constants\FlashMessages;
 use App\Exceptions\Worklogs\WorklogNotCreatedException;
+use App\Exceptions\Worklogs\WorklogNotDeletedException;
 use App\Exceptions\Worklogs\WorklogNotFoundException;
 use App\Exceptions\Worklogs\WorklogNotUpdatedException;
 use App\Models\Worklog;
@@ -30,6 +31,18 @@ class WorklogService
         throw_if(!$worklogs,
             WorklogNotFoundException::class,
         FlashMessages::ERROR_FETCH_WORKLOG
+        );
+
+        return $worklogs;
+    }
+
+    public function getAllWorklogs(): Collection
+    {
+        $worklogs = $this->worklog->orderByDesc('created_at')->get();
+
+        throw_if(!$worklogs,
+            WorklogNotFoundException::class,
+            FlashMessages::ERROR_FETCH_WORKLOG
         );
 
         return $worklogs;
@@ -73,6 +86,16 @@ class WorklogService
         throw_if(!$worklog->update($validatedWorklogData),
             WorklogNotUpdatedException::class,
             FlashMessages::ERROR_UPDATE_WORKLOG
+        );
+    }
+
+    public function delete(int $worklogId)
+    {
+        $worklog = $this->find($worklogId);
+
+        throw_if(!$worklog->delete(),
+        WorklogNotDeletedException::class,
+        FlashMessages::ERROR_DELETE_WORKLOG
         );
     }
 }
