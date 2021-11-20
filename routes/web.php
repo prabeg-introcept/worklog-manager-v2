@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\WorklogController as AdminWorklogController;
 use App\Http\Controllers\Users\WorklogController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -27,4 +29,7 @@ Route::post('/login', [LoginController::class, 'store']);
 Route::middleware('auth')->group(function(){
     Route::get('/logout', [LoginController::class, 'logout'])->name('user.logout');
     Route::resource('/worklogs', WorklogController::class)->except(['show', 'destroy']);
+    Route::group(['prefix' => 'admin', 'middleware' => 'admin', 'name' => 'admin.'], function(){
+        Route::resource('/worklogs', AdminWorklogController::class, ['as' => 'admin'])->except(['show']);
+    });
 });
