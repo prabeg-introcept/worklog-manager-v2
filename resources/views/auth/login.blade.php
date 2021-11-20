@@ -1,6 +1,5 @@
 @include('templates.header')
 
-<h1>Worklog Manager</h1>
 <h2>Login Form</h2>
 
 @if ($message = Session::get('userRegistrationStatus'))
