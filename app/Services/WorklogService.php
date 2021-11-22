@@ -38,7 +38,9 @@ class WorklogService
 
     public function getAllWorklogs(): Collection
     {
-        $worklogs = $this->worklog->orderByDesc('created_at')->get();
+        $worklogs = $this->worklog->with('user.department')
+            ->latest()
+            ->get();
 
         throw_if(!$worklogs,
             WorklogNotFoundException::class,
