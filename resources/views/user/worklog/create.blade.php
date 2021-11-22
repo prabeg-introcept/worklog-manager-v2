@@ -1,14 +1,12 @@
 @include('templates.header')
-@includeWhen(auth()->user()->is_admin, 'templates.admin-nav')
-@includeUnless(auth()->user()->is_admin, 'templates.nav')
+@include('templates.nav')
 
 <h2>Create Worklog</h2>
-<form
-    @if(auth()->user()->is_admin)
-        action="{{route('admin.worklogs.store')}}"
-    @endif
-    method="post">
+<form  action="{{route('worklogs.store')}}" method="post">
     @csrf
+    @php
+        $currentUser = getCurrentUser()
+    @endphp
     <div class="row">
         <div class="col">
             <label for="createdAt" class="form-label">Date: </label>
@@ -27,7 +25,7 @@
                 class="form-control"
                 readonly
                 name="username"
-                value="{{ auth()->user()->username }}"
+                value="{{ $currentUser->username }}"
             />
         </div>
         <div class="col">
@@ -37,7 +35,7 @@
                 class="form-control"
                 readonly
                 name="department"
-                value="{{ auth()->user()->department->name }}"
+                value="{{ $currentUser->department->name }}"
             />
         </div>
     </div>
@@ -71,7 +69,7 @@
             type="hidden"
             class="form-control"
             name="user_id"
-            value="{{ auth()->id() }}"
+            value="{{ $currentUser->id }}"
         />
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>

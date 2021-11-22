@@ -1,6 +1,5 @@
 @include('templates.header')
-@includeWhen(auth()->user()->is_admin, 'templates.admin-nav')
-@includeUnless(auth()->user()->is_admin, 'templates.nav')
+@include('templates.nav')
 
 <h2>Edit Worklog</h2>
 
@@ -10,6 +9,9 @@
 <form action="{{ route('worklogs.update', [$worklog->id]) }}" method="POST">
     @method('PUT')
     @csrf
+    @php
+        $currentUser = getCurrentUser()
+    @endphp
     <div class="row">
         <div class="col">
             <label for="createdAt" class="form-label">Created At: </label>
@@ -82,7 +84,7 @@
             type="hidden"
             class="form-control"
             name="user_id"
-            value="{{ auth()->id() }}"
+            value="{{ $currentUser->id }}"
         />
     </div>
     <button type="submit" class="btn btn-primary">Save</button>

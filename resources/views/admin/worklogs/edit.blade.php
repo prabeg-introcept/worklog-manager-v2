@@ -8,6 +8,9 @@
 <form action="{{ route('admin.worklogs.update', [$worklog->id]) }}" method="POST">
     @method('PUT')
     @csrf
+    @php
+        $currentUser = getCurrentUser()
+    @endphp
     <div class="row">
         <div class="col">
             <label for="createdAt" class="form-label">Created At: </label>
@@ -80,7 +83,7 @@
             type="hidden"
             class="form-control"
             name="user_id"
-            value="{{ auth()->id() }}"
+            value="{{ $currentUser->id }}"
         />
     </div>
     <button type="submit" class="btn btn-primary">Save</button>
