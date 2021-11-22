@@ -14,7 +14,10 @@ class AdminSeeder extends Seeder
      */
     public function run()
     {
-        User::where('username', 'shakyaprabeg')
-            ->update(['is_admin' => true]);
+/*        User::where('username', 'shakyaprabeg')
+            ->update(['is_admin' => true]);*/
+
+        // Implementing an alternative to seed admin using factory
+        User::factory()->create();
     }
 }
