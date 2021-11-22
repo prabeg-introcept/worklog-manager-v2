@@ -78,10 +78,12 @@ class WorklogService
     {
         $worklog = $this->find($worklogId);
 
-        throw_if(!$worklog->created_at->isToday(),
-            WorklogNotUpdatedException::class,
-            FlashMessages::ERROR_UPDATE_WORKLOG_ON_DIFFERENT_DATE
-        );
+        if(!auth()->user()->is_admin){
+            throw_if(!$worklog->created_at->isToday(),
+                WorklogNotUpdatedException::class,
+                FlashMessages::ERROR_UPDATE_WORKLOG_ON_DIFFERENT_DATE
+            );
+        }
 
         throw_if(!$worklog->update($validatedWorklogData),
             WorklogNotUpdatedException::class,
