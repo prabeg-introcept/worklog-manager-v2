@@ -36,6 +36,9 @@
                 {{ $worklog->updated_at->format('Y-m-d, h:i A') }}
             </td>
             <td>
+                <a href="{{ route('worklogs.feedbacks.create', [$worklog->id]) }}">Add Feedback</a>
+            </td>
+            <td>
                 <form action="{{ route('admin.worklogs.destroy', [$worklog->id]) }}" method="POST">
                     @method('DELETE')
                     @csrf

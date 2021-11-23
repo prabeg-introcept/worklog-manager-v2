@@ -90,4 +90,30 @@
     <button type="submit" class="btn btn-primary">Save</button>
 </form>
 
+<h3>Feedbacks</h3>
+@if($worklog->feedbacks)
+    <div class="container">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Created At</th>
+                <th scope="col">Feedback</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach($worklog->feedbacks as $feedback)
+                <tr>
+                    <td>
+                        {{$feedback->created_at->format('Y-m-d, h:i A')}}
+                    </td>
+                    <td>
+                        {{ $feedback->description }}
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
+    </div>
+@endif
+
 @include('templates.footer')
