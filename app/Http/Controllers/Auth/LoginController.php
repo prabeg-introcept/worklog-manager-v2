@@ -33,6 +33,10 @@ class LoginController extends Controller
         }
         $request->session()->regenerate();
 
+        if(auth()->user()->is_admin){
+            return redirect()->route('admin.worklogs.index');
+        }
+
         return redirect()->route('worklogs.index');
     }
 
