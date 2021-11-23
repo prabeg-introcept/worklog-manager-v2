@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\WorklogController as AdminWorklogController;
+use App\Http\Controllers\Admin\WorklogFeedbackController;
 use App\Http\Controllers\Users\WorklogController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
@@ -31,5 +32,6 @@ Route::middleware('auth')->group(function(){
     Route::resource('/worklogs', WorklogController::class)->except(['show', 'destroy']);
     Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function(){
         Route::resource('/worklogs', AdminWorklogController::class, ['as' => 'admin'])->except(['show']);
+        Route::resource('worklogs.feedbacks', WorklogFeedbackController::class)->except(['index', 'show']);
     });
 });
