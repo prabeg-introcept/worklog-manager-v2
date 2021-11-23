@@ -16,7 +16,7 @@
             class="form-control"
             readonly
             name="date"
-            value="{{ $feedback->created_at->format('Y-m-d, h:i A') }}"
+            value="{{ $feedback->created_at->format(\App\Constants\DateTimeFormat::DEFAULT_FORMAT) }}"
         />
         </div>
         <div class="col">
@@ -26,7 +26,7 @@
                 class="form-control"
                 readonly
                 name="department"
-                value="{{ $feedback->updated_at->format('Y-m-d, h:i A') }}"
+                value="{{ $feedback->updated_at->format(\App\Constants\DateTimeFormat::DEFAULT_FORMAT) }}"
             />
         </div>
     </div>

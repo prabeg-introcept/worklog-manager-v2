@@ -15,7 +15,7 @@
                 class="form-control"
                 readonly
                 name="date"
-                value="{{ \Carbon\Carbon::now()->format('Y-m-d, h:i A') }}"
+                value="{{ \Carbon\Carbon::now()->format(\App\Constants\DateTimeFormat::DEFAULT_FORMAT) }}"
             />
         </div>
         <div class="col">

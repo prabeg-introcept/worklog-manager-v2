@@ -20,7 +20,7 @@
                 class="form-control"
                 readonly
                 name="date"
-                value="{{ $worklog->created_at->format('Y-m-d, h:i A') }}"
+                value="{{ $worklog->created_at->format(\App\Constants\DateTimeFormat::DEFAULT_FORMAT) }}"
             />
         </div>
         <div class="col">
@@ -50,7 +50,7 @@
                 class="form-control"
                 readonly
                 name="department"
-                value="{{ $worklog->updated_at->format('Y-m-d, h:i A') }}"
+                value="{{ $worklog->updated_at->format(\App\Constants\DateTimeFormat::DEFAULT_FORMAT) }}"
             />
         </div>
     </div>
@@ -90,30 +90,34 @@
     <button type="submit" class="btn btn-primary">Save</button>
 </form>
 
-<h3>Feedbacks</h3>
-@if($worklog->feedbacks)
-    <div class="container">
-        <table class="table table-striped">
-            <thead>
+<div class="container">
+    <h3>Feedbacks</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Created At</th>
+            <th scope="col">Feedback</th>
+        </tr>
+        </thead>
+        <tbody>
+        @forelse($worklog->feedbacks as $feedback)
             <tr>
-                <th scope="col">Created At</th>
-                <th scope="col">Feedback</th>
+                <td>
+                    {{$feedback->created_at->format(\App\Constants\DateTimeFormat::DEFAULT_FORMAT)}}
+                </td>
+                <td>
+                    {{ $feedback->description }}
+                </td>
             </tr>
-            </thead>
-            <tbody>
-            @foreach($worklog->feedbacks as $feedback)
-                <tr>
-                    <td>
-                        {{$feedback->created_at->format('Y-m-d, h:i A')}}
-                    </td>
-                    <td>
-                        {{ $feedback->description }}
-                    </td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
-    </div>
-@endif
+        @empty
+            <td>
+                <div class="d-flex flex-fill justify-content-center">
+                    {{ \App\Constants\EmptyTable::FEEDBACKS }}
+                </div>
+            </td>
+        @endforelse
+        </tbody>
+    </table>
+</div>
 
 @include('templates.footer')

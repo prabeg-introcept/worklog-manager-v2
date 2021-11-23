@@ -13,7 +13,7 @@
             class="form-control"
             readonly
             name="date"
-            value="{{ $worklog->created_at->format('Y-m-d, h:i A') }}"
+            value="{{ $worklog->created_at->format(\App\Constants\DateTimeFormat::DEFAULT_FORMAT) }}"
         />
     </div>
     <div class="col">
@@ -43,7 +43,7 @@
             class="form-control"
             readonly
             name="department"
-            value="{{ $worklog->updated_at->format('Y-m-d, h:i A') }}"
+            value="{{ $worklog->updated_at->format(\App\Constants\DateTimeFormat::DEFAULT_FORMAT) }}"
         />
     </div>
 </div>
@@ -61,40 +61,45 @@
     <label for="description" class="form-label">Description: </label>
     <textarea class="form-control" name="description" rows="3" readonly>{{ $worklog->description }}</textarea>
 </div>
-@if($worklog->feedbacks)
-    <div class="container">
-        <table class="table table-striped">
-            <thead>
 
-            <tr>
-                <th scope="col">Created At</th>
-                <th scope="col">Feedback</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($worklog->feedbacks as $feedback)
-            <tr>
-                <td>
-                    {{$feedback->created_at->format('Y-m-d, h:i A')}}
-                </td>
-                <td>
-                    <a href=" {{route('worklogs.feedbacks.edit', [$worklog->id, $feedback->id])}} ">
-                        {{ $feedback->description }}
-                    </a>
-                </td>
-                <td>
-                    <form action="{{ route('worklogs.feedbacks.destroy', [$worklog->id, $feedback->id]) }}" method="POST">
-                        @method('DELETE')
-                        @csrf
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this feedback?')">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-            </tbody>
-        </table>
-    </div>
-@endif
+<div class="container">
+    <h3>Feedbacks</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Created At</th>
+            <th scope="col">Feedback</th>
+        </tr>
+        </thead>
+        <tbody>
+        @forelse($worklog->feedbacks as $feedback)
+        <tr>
+            <td>
+                {{$feedback->created_at->format(\App\Constants\DateTimeFormat::DEFAULT_FORMAT)}}
+            </td>
+            <td>
+                <a href=" {{route('worklogs.feedbacks.edit', [$worklog->id, $feedback->id])}} ">
+                    {{ $feedback->description }}
+                </a>
+            </td>
+            <td>
+                <form action="{{ route('worklogs.feedbacks.destroy', [$worklog->id, $feedback->id]) }}" method="POST">
+                    @method('DELETE')
+                    @csrf
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this feedback?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+        @empty
+            <td>
+                <div class="d-flex flex-fill justify-content-center">
+                    {{ \App\Constants\EmptyTable::FEEDBACKS }}
+                </div>
+            </td>
+        @endforelse
+        </tbody>
+    </table>
+</div>
 
 <form action="{{ route('worklogs.feedbacks.store', [$worklog->id]) }}" method="POST">
     @csrf
