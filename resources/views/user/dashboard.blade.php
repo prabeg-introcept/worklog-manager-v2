@@ -14,10 +14,10 @@
     </thead>
     <tbody>
 
-    @foreach($worklogs as $worklog)
+    @forelse($worklogs as $worklog)
     <tr>
         <td>
-            {{ $worklog->created_at->format('Y-m-d, h:i A') }}
+            {{ $worklog->created_at->format(\App\Constants\DateTimeFormat::DEFAULT_FORMAT) }}
         </td>
         <td>
             <a href="{{ route('worklogs.edit', [$worklog->id]) }}">
@@ -25,10 +25,16 @@
             </a>
         </td>
         <td>
-            {{ $worklog->updated_at->format('Y-m-d, h:i A') }}
+            {{ $worklog->updated_at->format(\App\Constants\DateTimeFormat::DEFAULT_FORMAT) }}
         </td>
     </tr>
-    @endforeach
+    @empty
+        <td>
+            <div class="d-flex flex-fill justify-content-center">
+                {{ \App\Constants\EmptyTable::WORKLOGS }}
+            </div>
+        </td>
+    @endforelse
 
     </tbody>
 </table>
