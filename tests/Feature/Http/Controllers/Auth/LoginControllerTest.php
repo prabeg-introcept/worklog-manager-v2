@@ -64,7 +64,7 @@ class LoginControllerTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 
-    public function test_login_route_redirects_to_dashboard_for_authenticated_user(): void
+    public function test_login_route_redirects_to_user_dashboard_for_authenticated_user(): void
     {
         $user = User::firstWhere('username', 'ashish');
         $this->post('/login', [
@@ -75,5 +75,20 @@ class LoginControllerTest extends TestCase
         $response = $this->get(route('user.login'));
 
         $response->assertRedirect(route('worklogs.index'));
+    }
+
+    public function test_logout_clear_user_session(): void
+    {
+        $user = User::firstWhere('username', 'ashish');
+
+        $this->post('/login', [
+            'username' => $user->username,
+            'password' => 'TestP@ssword#1234'
+        ]);
+
+        $response = $this->post('/logout');
+
+        $this->assertGuest();
+        $response->assertRedirect(route('user.login'));
     }
 }
