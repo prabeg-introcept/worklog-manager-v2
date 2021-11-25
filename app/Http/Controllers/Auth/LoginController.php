@@ -13,10 +13,13 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
     /**
-     * @return Factory|View
+     * @return Factory|View|RedirectResponse
      */
     public function create()
     {
+        if(auth()->check()){
+            return redirect()->route('worklogs.index');
+        }
         return view('auth.login');
     }
 

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Http\Controllers\Auth;
 
-use App\Models\Department;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -63,5 +62,18 @@ class LoginControllerTest extends TestCase
 
         $response->assertRedirect(route('admin.worklogs.index'));
         $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_login_route_redirects_to_dashboard_for_authenticated_user(): void
+    {
+        $user = User::firstWhere('username', 'ashish');
+        $this->post('/login', [
+            'username' => $user->username,
+            'password' => 'TestP@ssword#1234'
+        ]);
+
+        $response = $this->get(route('user.login'));
+
+        $response->assertRedirect(route('worklogs.index'));
     }
 }
