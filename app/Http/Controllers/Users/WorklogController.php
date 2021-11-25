@@ -49,7 +49,7 @@ class WorklogController extends Controller
      */
     public function create()
     {
-        return view('worklog.create');
+        return view('user.worklog.create');
     }
 
     /**
@@ -87,7 +87,7 @@ class WorklogController extends Controller
                 ->route('worklogs.index')
                 ->with('error', "Worklog with id: $id does not exist.");
         }
-        return view('worklog.edit',
+        return view('user.worklog.edit',
             ['worklog' => $worklog]
         );
     }
