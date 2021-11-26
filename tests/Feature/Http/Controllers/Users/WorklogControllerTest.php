@@ -29,4 +29,11 @@ class WorklogControllerTest extends TestCase
 
         $response->assertViewIs('user.worklog.create');
     }
+
+    public function test_add_worklog_form_dsiplays_validation_error(): void
+    {
+        $response = $this->post(route('worklogs.store'), []);
+
+        $response->assertSessionHasErrors('title');
+    }
 }
