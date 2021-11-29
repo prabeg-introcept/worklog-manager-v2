@@ -22,7 +22,7 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail(),
             'password' => Hash::make('TestP@ssword#1234'), // password
             'is_admin' => 1,
-            'department_id' => 2
+            'department_id' => 3
         ];
     }
 

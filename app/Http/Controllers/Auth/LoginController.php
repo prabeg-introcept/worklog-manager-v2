@@ -13,10 +13,16 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
     /**
-     * @return Factory|View
+     * @return Factory|View|RedirectResponse
      */
     public function create()
     {
+        if(auth()->check()){
+            if(auth()->user()->is_admin){
+                return redirect()->route('admin.worklogs.index');
+            }
+            return redirect()->route('worklogs.index');
+        }
         return view('auth.login');
     }
 
@@ -47,6 +53,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('user.login');
     }
 }
