@@ -8,7 +8,9 @@ use App\Exceptions\Worklogs\WorklogNotDeletedException;
 use App\Exceptions\Worklogs\WorklogNotFoundException;
 use App\Exceptions\Worklogs\WorklogNotUpdatedException;
 use App\Models\Worklog;
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 use Throwable;
 
 class WorklogService
@@ -53,10 +55,17 @@ class WorklogService
     /**
      * @param $worklogId
      * @return Worklog
+     * @throws Exception
      */
     public function find(int $worklogId): Worklog
     {
-        return $this->worklog->findOrFail($worklogId);
+        $worklog = $this->worklog->findOrFail($worklogId);
+        $response = Gate::inspect('update', $worklog);
+
+        if(!$response->allowed()){
+            throw new Exception($response->message());
+        }
+        return $worklog;
     }
 
     /**
@@ -81,6 +90,11 @@ class WorklogService
         $worklog = $this->find($worklogId);
 
         if(!auth()->user()->is_admin){
+            $response = Gate::inspect('update', $worklog);
+
+            if(!$response->allowed()){
+                throw new Exception($response->message());
+            }
             throw_if(!$worklog->created_at->isToday(),
                 WorklogNotUpdatedException::class,
                 FlashMessages::ERROR_UPDATE_WORKLOG_ON_DIFFERENT_DATE

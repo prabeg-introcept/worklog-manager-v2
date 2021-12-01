@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreWorklogRequest;
 use App\Http\Requests\UpdateWorklogRequest;
 use App\Services\WorklogService;
+use Exception;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -86,8 +87,12 @@ class WorklogController extends Controller
             return redirect()
                 ->route('worklogs.index')
                 ->with('error', "Worklog with id: $id does not exist.");
+        }catch(Exception $exception){
+            return redirect()
+                ->route('worklogs.index')
+                ->with('error', $exception->getMessage());
         }
-        return view('worklog.edit',
+        return view('user.worklog.edit',
             ['worklog' => $worklog]
         );
     }
@@ -107,6 +112,10 @@ class WorklogController extends Controller
         }
         catch(Throwable $exception){
             return back()->with('error', $exception->getMessage());
+        }catch(Exception $exception){
+            return redirect()
+                ->route('worklogs.index')
+                ->with('error', $exception->getMessage());
         }
         return back()->with('success', FlashMessages::SUCCESS_UPDATE_WORKLOG);
     }
