@@ -11,6 +11,14 @@ class WorklogPolicy
 {
     use HandlesAuthorization;
 
+    public function before(User $user, $ability)
+    {
+        if($user->is_admin)
+        {
+            return true;
+        }
+    }
+
     /**
      * Determine whether the user can view any models.
      *
@@ -31,7 +39,7 @@ class WorklogPolicy
      */
     public function view(User $user, Worklog $worklog)
     {
-        return $user->id === $worklog->user_id || auth()->user()->is_admin
+        return $user->id === $worklog->user_id
             ? Response::allow()
             : Response::deny('You do not own worklog with id:' . $worklog->id);
     }
@@ -56,7 +64,7 @@ class WorklogPolicy
      */
     public function update(User $user, Worklog $worklog)
     {
-        return $user->id === $worklog->user_id || auth()->user()->is_admin
+        return $user->id === $worklog->user_id
             ? Response::allow()
             : Response::deny('You do not own worklog with id:' . $worklog->id);
     }
@@ -70,7 +78,7 @@ class WorklogPolicy
      */
     public function delete(User $user, Worklog $worklog)
     {
-        return $user->id === $worklog->user_id || auth()->user()->is_admin
+        return $user->id === $worklog->user_id
             ? Response::allow()
             : Response::deny('You do not own worklog with id:' . $worklog->id);
     }
