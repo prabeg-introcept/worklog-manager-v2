@@ -31,7 +31,7 @@ class WorklogPolicy
      */
     public function view(User $user, Worklog $worklog)
     {
-        return $user->id === $worklog->user_id
+        return $user->id === $worklog->user_id || auth()->user()->is_admin
             ? Response::allow()
             : Response::deny('You do not own worklog with id:' . $worklog->id);
     }
@@ -56,7 +56,7 @@ class WorklogPolicy
      */
     public function update(User $user, Worklog $worklog)
     {
-        return $user->id === $worklog->user_id
+        return $user->id === $worklog->user_id || auth()->user()->is_admin
             ? Response::allow()
             : Response::deny('You do not own worklog with id:' . $worklog->id);
     }
@@ -70,7 +70,7 @@ class WorklogPolicy
      */
     public function delete(User $user, Worklog $worklog)
     {
-        return $user->id === $worklog->user_id
+        return $user->id === $worklog->user_id || auth()->user()->is_admin
             ? Response::allow()
             : Response::deny('You do not own worklog with id:' . $worklog->id);
     }
