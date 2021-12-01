@@ -33,7 +33,7 @@ class WorklogPolicy
     {
         return $user->id === $worklog->user_id
             ? Response::allow()
-            : Response::deny('You do not own this worklog');
+            : Response::deny('You do not own worklog with id:' . $worklog->id);
     }
 
     /**
@@ -58,7 +58,7 @@ class WorklogPolicy
     {
         return $user->id === $worklog->user_id
             ? Response::allow()
-            : Response::deny('You do not own this worklog');
+            : Response::deny('You do not own worklog with id:' . $worklog->id);
     }
 
     /**
@@ -72,7 +72,7 @@ class WorklogPolicy
     {
         return $user->id === $worklog->user_id
             ? Response::allow()
-            : Response::deny('You do not own this worklog');
+            : Response::deny('You do not own worklog with id:' . $worklog->id);
     }
 
     /**
