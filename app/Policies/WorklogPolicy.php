@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\User;
 use App\Models\Worklog;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class WorklogPolicy
 {
@@ -30,7 +31,9 @@ class WorklogPolicy
      */
     public function view(User $user, Worklog $worklog)
     {
-        //
+        return $user->id === $worklog->user_id
+            ? Response::allow()
+            : Response::deny('You do not own this worklog');
     }
 
     /**
@@ -53,7 +56,9 @@ class WorklogPolicy
      */
     public function update(User $user, Worklog $worklog)
     {
-        //
+        return $user->id === $worklog->user_id
+            ? Response::allow()
+            : Response::deny('You do not own this worklog');
     }
 
     /**
@@ -65,7 +70,9 @@ class WorklogPolicy
      */
     public function delete(User $user, Worklog $worklog)
     {
-        //
+        return $user->id === $worklog->user_id
+            ? Response::allow()
+            : Response::deny('You do not own this worklog');
     }
 
     /**
